@@ -55,7 +55,9 @@ class _DescriptorTileState extends State<DescriptorTile> {
 
   Future onWritePressed() async {
     try {
-      await d.write(_getRandomBytes());
+      // Generate random 0 or 1 for first byte only
+      final randomBit = Random().nextInt(2);
+      await d.write([randomBit]);
       Snackbar.show(ABC.c, "Descriptor Write : Success", success: true);
     } catch (e) {
       Snackbar.show(ABC.c, prettyException("Descriptor Write Error:", e), success: false);

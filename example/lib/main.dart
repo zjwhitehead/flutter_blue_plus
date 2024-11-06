@@ -55,7 +55,12 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
         : BluetoothOffScreen(adapterState: _adapterState);
 
     return MaterialApp(
-      color: Colors.lightBlue,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+        ),
+        useMaterial3: true,
+      ),
       home: screen,
       navigatorObservers: [BluetoothAdapterStateObserver()],
     );
