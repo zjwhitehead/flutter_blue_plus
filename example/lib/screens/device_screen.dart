@@ -40,6 +40,8 @@ class _DeviceScreenState extends State<DeviceScreen> {
       _connectionState = state;
       if (state == BluetoothConnectionState.connected) {
         _services = []; // must rediscover services
+        // Auto-discover services when connected
+        await onDiscoverServicesPressed();
       }
       if (state == BluetoothConnectionState.connected && _rssi == null) {
         _rssi = await widget.device.readRssi();
@@ -251,13 +253,27 @@ class _DeviceScreenState extends State<DeviceScreen> {
               ListTile(
                 leading: buildRssiTile(context),
                 title: Text('Device is ${_connectionState.toString().split('.')[1]}.'),
-                trailing: buildGetServices(context),
               ),
               buildMtuTile(context),
               ..._buildServiceTiles(context, widget.device),
             ],
           ),
         ),
+        floatingActionButton: isConnected
+          ? FloatingActionButton(
+              onPressed: _isDiscoveringServices ? null : onDiscoverServicesPressed,
+              child: _isDiscoveringServices
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.0,
+                      ),
+                    )
+                  : const Icon(Icons.refresh),
+            )
+          : null,
       ),
     );
   }

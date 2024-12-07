@@ -3,6 +3,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 import "characteristic_tile.dart";
 import "../screens/config_service_screen.dart";
+import "../screens/bms_service_screen.dart";
 
 class ServiceTile extends StatelessWidget {
   final BluetoothService service;
@@ -12,6 +13,8 @@ class ServiceTile extends StatelessWidget {
 
   static const Map<String, String> uuidToName = {
     '1779A55B-DEB8-4482-A5D1-A12E62146138': 'Config Service',
+    '9E0F2FA3-3F2B-49C0-A6A3-3D8923062133': 'BMS Telemetry Service',
+    'C154DAE9-1984-40EA-B20F-5B23F9CBA0A9': 'ESC Telemetry Service',
   };
 
   Widget buildUuid(BuildContext context) {
@@ -41,9 +44,11 @@ class ServiceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isConfigService = service.uuid.str.toUpperCase() == '1779A55B-DEB8-4482-A5D1-A12E62146138';
+    String upperUuid = service.uuid.str.toUpperCase();
+    bool isConfigService = upperUuid == '1779A55B-DEB8-4482-A5D1-A12E62146138';
+    bool isBMSService = upperUuid == '9E0F2FA3-3F2B-49C0-A6A3-3D8923062133';
 
-    if (isConfigService) {
+    if (isConfigService || isBMSService) {
       return ListTile(
         title: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -57,7 +62,9 @@ class ServiceTile extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ConfigServiceScreen(service: service),
+              builder: (context) => isConfigService
+                ? ConfigServiceScreen(service: service)
+                : BMSServiceScreen(service: service),
             ),
           );
         },
