@@ -30,11 +30,23 @@ class _BMSServiceScreenState extends State<BMSServiceScreen> {
   final Map<String, Stream<List<int>>> _characteristicStreams = {};
   final Map<String, List<int>> _characteristicValues = {};
   bool _isRefreshing = false;
+  Timer? _refreshTimer;
 
   @override
   void initState() {
     super.initState();
     _setupCharacteristicStreams();
+    // Start periodic refresh
+    _refreshTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      _refreshCharacteristics();
+    });
+  }
+
+  @override
+  void dispose() {
+    // Cancel the timer when disposing
+    _refreshTimer?.cancel();
+    super.dispose();
   }
 
   void _setupCharacteristicStreams() {
@@ -85,7 +97,7 @@ class _BMSServiceScreenState extends State<BMSServiceScreen> {
         case '6FEEC926-BA3C-4E65-BC71-5DB481811186': // Current
           return '${float.toStringAsFixed(1)}A';
         case '9DEA1343-434F-4555-A0A1-BB43FCBC68A6': // Power
-          return '${float.toStringAsFixed(1)}W';
+          return '${float.toStringAsFixed(2)}kW';
         case '49267B41-560F-4CFF-ADC8-90EF85D2BE20': // High Cell
         case 'B9D01E5C-3751-4092-8B06-6D1FFF479E77': // Low Cell
           return '${float.toStringAsFixed(3)}V';
